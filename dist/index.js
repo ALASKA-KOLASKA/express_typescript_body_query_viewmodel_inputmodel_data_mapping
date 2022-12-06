@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const port = 3000;
+const jsonBodyMiddleware = express_1.default.json();
+app.use(jsonBodyMiddleware);
 const db = {
     courses: [
         { id: 1, title: 'front-end' },
@@ -29,6 +31,21 @@ app.get('/courses/:id', (req, res) => {
         return;
     }
     res.json(foundCourse);
+});
+app.post('/courses', (req, res) => {
+    if (!req.body.title) {
+        res.sendStatus(400);
+        return;
+    }
+    const createdCourse = {
+        id: +(new Date()),
+        title: req.body.title
+    };
+    db.courses.push(createdCourse);
+    console.log(createdCourse);
+    res
+        .status(201)
+        .json(createdCourse);
 });
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);

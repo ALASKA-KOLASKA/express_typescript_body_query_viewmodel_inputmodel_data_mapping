@@ -3,6 +3,9 @@ import express from 'express'
 const app = express()
 const port = 3000
 
+const jsonBodyMiddleware = express.json()
+app.use(jsonBodyMiddleware)
+
 const db = {
     courses: [
         {id: 1, title: 'front-end'},
@@ -19,8 +22,6 @@ app.get('/courses', (req, res) => {
     }
         res.json(foundCourses)
 })
-
-
 app.get('/courses/:id', (req, res) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id)
 
@@ -30,6 +31,23 @@ app.get('/courses/:id', (req, res) => {
     }
 
     res.json(foundCourse)
+})
+app.post('/courses', (req, res) =>{
+
+    if (!req.body.title){
+        res.sendStatus(400)
+        return;
+    }
+
+    const createdCourse = {
+        id: +(new Date()),
+        title: req.body.title
+    };
+    db.courses.push(createdCourse)
+    console.log(createdCourse)
+    res
+        .status(201)
+        .json(createdCourse)
 })
 
 app.listen(port, () => {

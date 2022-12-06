@@ -75,7 +75,7 @@ describe('/course', () => {
 
         await request(app)
             .get('/courses/' + createdCourse1.id)
-            .expect(HTTP_STATUSES.OK_200, [createdCourse1])
+            .expect(HTTP_STATUSES.OK_200, createdCourse1)
     })
 
     it(`shouldn't update course that not exist`, async () => {
@@ -103,6 +103,27 @@ describe('/course', () => {
             .expect(HTTP_STATUSES.OK_200, createdCourse2)
     })
 
+    it(`should delete both courses`, async () => {
+        await request(app)
+            .delete('/courses/' + createdCourse1.id)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+        await request(app)
+            .get('/courses/' + createdCourse1.id)
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
+
+        await request(app)
+            .delete('/courses/' + createdCourse2.id)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+        await request(app)
+            .get('/courses/' + createdCourse2.id)
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
+
+        await request(app)
+            .get('/courses')
+            .expect(HTTP_STATUSES.OK_200, [])
+    })
 
 
 

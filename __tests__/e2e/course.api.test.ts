@@ -1,6 +1,20 @@
-describe('/course', () => {
+import request from 'supertest'
+import { app } from '../../src'
 
-    it('should return 200 and embty array', () => {
-        expect(1).toBe(1);
+describe('/course', () => {
+    beforeAll(async () => {
+        await request(app).delete('/__tests__/data')
+    })
+
+    it('should return 200 and empty array', async () => {
+        await request(app)
+            .get('/courses')
+            .expect(200, [])
+    })
+
+    it('should return 404 for not existing course', async () => {
+        await request(app)
+            .get('/courses/1')
+            .expect(404)
     })
 })

@@ -3,7 +3,7 @@ import express from 'express'
 export const app = express()
 const port = 3000
 
-const HTTP_STATUSES = {
+export const HTTP_STATUSES = {
     OK_200: 200,
     CREATED_201: 201,
     NO_CONTENT_204: 204,

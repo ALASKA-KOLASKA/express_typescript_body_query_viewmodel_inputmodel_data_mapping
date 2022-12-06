@@ -49,6 +49,11 @@ app.post('/courses', (req, res) =>{
         .status(201)
         .json(createdCourse)
 })
+app.delete('/courses/:id', (req, res) => {
+    db.courses = db.courses.filter(c => c.id !== +req.params.id)
+
+    res.sendStatus(204)
+})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

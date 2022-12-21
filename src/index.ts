@@ -1,4 +1,4 @@
-import express from 'express'
+import express, {Request, Response} from 'express'
 
 export const app = express()
 const port = 3000
@@ -23,12 +23,15 @@ const db = {
         {id: 4, title: 'devops'}
     ]
 }
-app.get('/courses', (req, res) => {
+app.get('/courses', (req: Request<{}, {}, {}, {title: string}>,
+                     res) => {
     let foundCourses = db.courses;
+
     if (req.query.title) {
         foundCourses = foundCourses
-            .filter(c => c.title.indexOf(req.query.title as string) > -1)
+            .filter(c => c.title.indexOf(req.query.title) > -1)
     }
+
         res.json(foundCourses)
 })
 app.get('/courses/:id', (req, res) => {

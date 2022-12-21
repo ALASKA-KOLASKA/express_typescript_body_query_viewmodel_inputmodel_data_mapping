@@ -1,4 +1,4 @@
-import express, {Request, Response} from 'express'
+import express, {Response} from 'express'
 import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "./types";
 import {CreateCourseModel} from "./models/CreateCourseModel";
 import {UpdateCourseModel} from "./models/UpdateCourseModel";
@@ -34,6 +34,15 @@ const db: { courses: CourseType[]} = {
         {id: 4, title: 'devops', studentsCount: 10}
     ]
 }
+
+const getCourseViewModel = (dbCourse: CourseType): CourseViewModel => {
+    return{
+        id: dbCourse.id,
+        title: dbCourse.title
+    }
+}
+
+
 app.get('/courses', (req: RequestWithQuery<QueryCoursesModel>,
                      res: Response<CourseViewModel[]>) => {
     let foundCourses = db.courses;
@@ -43,12 +52,7 @@ app.get('/courses', (req: RequestWithQuery<QueryCoursesModel>,
             .filter(c => c.title.indexOf(req.query.title) > -1)
     }
 
-        res.json(foundCourses.map(dbCourse => {
-            return {
-                id: dbCourse.id,
-                title: dbCourse.title
-            }
-        }))
+        res.json(foundCourses.map(getCourseViewModel))
 })
 app.get('/courses/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
                          res: Response<CourseViewModel>) => {
@@ -59,10 +63,7 @@ app.get('/courses/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
         return;
     }
 
-    res.json({
-        id: foundCourse.id,
-        title: foundCourse.title
-    })
+    res.json(getCourseViewModel(foundCourse))
 })
 app.post('/courses', (req: RequestWithBody<CreateCourseModel>,
                       res: Response<CourseViewModel>) =>{
@@ -81,7 +82,7 @@ app.post('/courses', (req: RequestWithBody<CreateCourseModel>,
     console.log(createdCourse)
     res
         .status(HTTP_STATUSES.CREATED_201)
-        .json(createdCourse)
+        .json(getCourseViewModel(createdCourse))
 })
 app.delete('/courses/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
                             res) => {

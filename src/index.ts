@@ -38,7 +38,7 @@ app.get('/courses', (req: Request<{}, {}, {}, {title: string}>,
 
         res.json(foundCourses)
 })
-app.get('/courses/:id', (req, res) => {
+app.get('/courses/:id', (req: Request<{id: string}>, res) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id)
 
     if (!foundCourse) {

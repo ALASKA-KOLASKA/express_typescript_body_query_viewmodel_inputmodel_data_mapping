@@ -3,6 +3,7 @@ import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWit
 import {CreateCourseModel} from "./models/CreateCourseModel";
 import {UpdateCourseModel} from "./models/UpdateCourseModel";
 import {QueryCoursesModel} from "./models/QueryCoursesModel";
+import {CourseViewModel} from "./models/CourseViewModel";
 
 export const app = express()
 const port = 3000
@@ -22,17 +23,18 @@ app.use(jsonBodyMiddleware)
 type CourseType = {
     id: number
     title: string
+    studentsCount: number
 }
 const db: { courses: CourseType[]} = {
     courses: [
-        {id: 1, title: 'front-end'},
-        {id: 2, title: 'back-end'},
-        {id: 3, title: 'automation qa'},
-        {id: 4, title: 'devops'}
+        {id: 1, title: 'front-end', studentsCount: 10},
+        {id: 2, title: 'back-end', studentsCount: 10},
+        {id: 3, title: 'automation qa', studentsCount: 10},
+        {id: 4, title: 'devops', studentsCount: 10}
     ]
 }
 app.get('/courses', (req: RequestWithQuery<QueryCoursesModel>,
-                     res: Response<CourseType[]>) => {
+                     res: Response<CourseViewModel[]>) => {
     let foundCourses = db.courses;
 
     if (req.query.title) {
@@ -42,7 +44,8 @@ app.get('/courses', (req: RequestWithQuery<QueryCoursesModel>,
 
         res.json(foundCourses)
 })
-app.get('/courses/:id', (req: RequestWithParams<{id: string}>, res) => {
+app.get('/courses/:id', (req: RequestWithParams<{id: string}>,
+                         res: Response<CourseViewModel>) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id)
 
     if (!foundCourse) {
@@ -53,16 +56,17 @@ app.get('/courses/:id', (req: RequestWithParams<{id: string}>, res) => {
     res.json(foundCourse)
 })
 app.post('/courses', (req: RequestWithBody<CreateCourseModel>,
-                      res: Response<CourseType>) =>{
+                      res: Response<CourseViewModel>) =>{
 
     if (!req.body.title){
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
         return;
     }
 
-    const createdCourse = {
+    const createdCourse: CourseType = {
         id: +(new Date()),
-        title: req.body.title
+        title: req.body.title,
+        studentsCount: 0
     };
     db.courses.push(createdCourse)
     console.log(createdCourse)

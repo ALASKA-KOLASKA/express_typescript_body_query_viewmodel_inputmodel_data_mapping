@@ -42,7 +42,12 @@ app.get('/courses', (req: RequestWithQuery<QueryCoursesModel>,
             .filter(c => c.title.indexOf(req.query.title) > -1)
     }
 
-        res.json(foundCourses)
+        res.json(foundCourses.map(dbCourse => {
+            return {
+                id: dbCourse.id,
+                title: dbCourse.title
+            }
+        }))
 })
 app.get('/courses/:id', (req: RequestWithParams<{id: string}>,
                          res: Response<CourseViewModel>) => {
@@ -53,7 +58,10 @@ app.get('/courses/:id', (req: RequestWithParams<{id: string}>,
         return;
     }
 
-    res.json(foundCourse)
+    res.json({
+        id: foundCourse.id,
+        title: foundCourse.title
+    })
 })
 app.post('/courses', (req: RequestWithBody<CreateCourseModel>,
                       res: Response<CourseViewModel>) =>{

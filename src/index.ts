@@ -1,5 +1,8 @@
 import express, {Request, Response} from 'express'
 import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "./types";
+import {CreateCourseModel} from "./models/CreateCourseModel";
+import {UpdateCourseModel} from "./models/UpdateCourseModel";
+import {QueryCoursesModel} from "./models/QueryCoursesModel";
 
 export const app = express()
 const port = 3000
@@ -28,7 +31,7 @@ const db: { courses: CourseType[]} = {
         {id: 4, title: 'devops'}
     ]
 }
-app.get('/courses', (req: RequestWithQuery<{title: string}>,
+app.get('/courses', (req: RequestWithQuery<QueryCoursesModel>,
                      res: Response<CourseType[]>) => {
     let foundCourses = db.courses;
 
@@ -49,7 +52,7 @@ app.get('/courses/:id', (req: RequestWithParams<{id: string}>, res) => {
 
     res.json(foundCourse)
 })
-app.post('/courses', (req: RequestWithBody<{title: string}>,
+app.post('/courses', (req: RequestWithBody<CreateCourseModel>,
                       res: Response<CourseType>) =>{
 
     if (!req.body.title){
@@ -72,7 +75,7 @@ app.delete('/courses/:id', (req: RequestWithParams<{id: string}>, res) => {
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 })
-app.put('/courses/:id', (req: RequestWithParamsAndBody<{id: string}, {title: string}>,
+app.put('/courses/:id', (req: RequestWithParamsAndBody<{id: string}, UpdateCourseModel>,
                          res) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);

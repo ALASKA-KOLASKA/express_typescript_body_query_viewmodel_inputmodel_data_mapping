@@ -48,7 +48,8 @@ app.get('/courses/:id', (req: Request<{id: string}>, res) => {
 
     res.json(foundCourse)
 })
-app.post('/courses', (req, res) =>{
+app.post('/courses', (req: Request<{},{},{title: string}>,
+                      res: Response<CourseType>) =>{
 
     if (!req.body.title){
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)

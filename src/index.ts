@@ -1,4 +1,5 @@
 import express, {Request, Response} from 'express'
+import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "./types";
 
 export const app = express()
 const port = 3000
@@ -27,7 +28,7 @@ const db: { courses: CourseType[]} = {
         {id: 4, title: 'devops'}
     ]
 }
-app.get('/courses', (req: Request<{}, {}, {}, {title: string}>,
+app.get('/courses', (req: RequestWithQuery<{title: string}>,
                      res: Response<CourseType[]>) => {
     let foundCourses = db.courses;
 
@@ -38,7 +39,7 @@ app.get('/courses', (req: Request<{}, {}, {}, {title: string}>,
 
         res.json(foundCourses)
 })
-app.get('/courses/:id', (req: Request<{id: string}>, res) => {
+app.get('/courses/:id', (req: RequestWithParams<{id: string}>, res) => {
     const foundCourse = db.courses.find(c => c.id === +req.params.id)
 
     if (!foundCourse) {
@@ -48,7 +49,7 @@ app.get('/courses/:id', (req: Request<{id: string}>, res) => {
 
     res.json(foundCourse)
 })
-app.post('/courses', (req: Request<{},{},{title: string}>,
+app.post('/courses', (req: RequestWithBody<{title: string}>,
                       res: Response<CourseType>) =>{
 
     if (!req.body.title){
@@ -66,12 +67,12 @@ app.post('/courses', (req: Request<{},{},{title: string}>,
         .status(HTTP_STATUSES.CREATED_201)
         .json(createdCourse)
 })
-app.delete('/courses/:id', (req: Request<{id: string}>, res) => {
+app.delete('/courses/:id', (req: RequestWithParams<{id: string}>, res) => {
     db.courses = db.courses.filter(c => c.id !== +req.params.id)
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 })
-app.put('/courses/:id', (req: Request<{id: string}, {}, {title: string}>,
+app.put('/courses/:id', (req: RequestWithParamsAndBody<{id: string}, {title: string}>,
                          res) => {
     if (!req.body.title) {
         res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);

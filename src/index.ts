@@ -66,7 +66,7 @@ app.post('/courses', (req: Request<{},{},{title: string}>,
         .status(HTTP_STATUSES.CREATED_201)
         .json(createdCourse)
 })
-app.delete('/courses/:id', (req, res) => {
+app.delete('/courses/:id', (req: Request<{id: string}>, res) => {
     db.courses = db.courses.filter(c => c.id !== +req.params.id)
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
